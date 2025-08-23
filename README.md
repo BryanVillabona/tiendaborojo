@@ -182,6 +182,100 @@ db.productos.find(
 )
 ```
 
+## Aggregation Framework con Pipelines 🧮
+
+**1. Mostrar un listado de los productos más vendidos (suma total de unidades vendidas por producto).**
+
+```jsx
+db.ventas.aggregate([
+  { $unwind: "$productos" },
+  { 
+    $group: { 
+      _id: "$productos.productoId", 
+      cantidad: { $sum: "$productos.cantidad" } 
+    } 
+  },
+  { $sort: { cantidad: -1 } },
+  { $limit: 3 }
+])
+```
+
+En esta consulta se aplica $unwind para descomponer el array productos en múltiples documentos individuales, lo que permite trabajar cada producto por separado dentro del pipeline. A continuación, se utiliza $group para sumar la cantidad vendida de cada producto y obtener su total acumulado. Después, los resultados se organizan en orden descendente mediante $sort, y finalmente se emplea $limit para restringir la salida a los tres productos más vendidos.
+
+**Resultado**
+
+![pipeline_1](./Readme_images/Pipeline_example_1.png)
+
+<br>
+
+**2. Agrupar clientes por cantidad de compras realizadas.**
+
+```jsx
+db.clientes.aggregate([
+    {$unwind: "$compras"},
+    { $group: {_id: "$_id", totalCompras: { $sum: 1 } } },
+    { $sort: { totalCompras: -1 } }
+])
+```
+
+**Explicación**
+
+En esta consulta se emplea `$unwind` para descomponer el array compras, lo que permite acceder a cada elemento de forma individual y procesarlo correctamente dentro del pipeline. Posteriormente, se utiliza $group para agrupar los documentos por su _id y calcular la suma correspondiente. Finalmente, se aplica $sort para ordenar los resultados en orden descendente según el valor agregado.
+
+**Resultado**
+
+![pipeline_2](./Readme_images/Pipeline_example_2.png)
+
+<br>
+
+**3. Mostrar el total de ventas por mes**
+
+```jsx
+db.ventas.aggregate([
+    {$group: {_id: { mes: { $month: "$fecha"}}, totalVentas: {$sum: 1}}}
+])
+```
+
+**Explicación**
+
+En esta consulta los documentos se agrupan por mes utilizando `$month`, lo que permite clasificar las ventas según la fecha registrada. Luego, mediante $sum, se calcula el total de compras realizadas en cada mes.
+
+**Resultado**
+
+![pipeline_3](./Readme_images/Pipeline_example_3.png)
+
+**4. Calcular el promedio de precios por categoría de producto.**
+
+```jsx
+db.productos.aggregate([
+    {$group: {_id: "$categoria", precioPromedio: {$avg: "$precio"}}}
+])
+```
+
+**Explicación**
+En esta consulta los productos se agrupan según su categoría, y mediante el operador `$avg` se calcula el promedio de precios correspondiente a cada una de ellas.
+
+**Resultado**
+
+![pipeline_4](./Readme_images/Pipeline_example_4.png)
+
+**5. Mostrar los 3 productos con mayor stock**
+
+```jsx
+db.productos.aggregate([
+    {$sort: {stock: -1}},
+    {$limit: 3},
+    {$project: {nombre: 1, stock: 1}}
+])
+```
+
+**Explicación**
+Los productos se ordenan en orden descendente, se limitan a los 3 primeros resultados y se realiza una proyección para mostrar únicamente el nombre y el stock de cada producto.
+
+**Resultado**
+
+![pipeline_5](./Readme_images/Pipeline_example_5.png)
+
 ## Funciones definidas en system.js 🛞
 
 **1. Definir una función calcularDescuento(precio, porcentaje) que devuelva el precio con descuento aplicado.**
