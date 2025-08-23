@@ -28,7 +28,7 @@ Esta colección guarda un historial completo de las transacciones realizadas en 
 
 La colección de inventario monitorea la cantidad disponible de cada producto en la tienda. Incluye registros de entradas, salidas, niveles mínimos y máximos, ayudando a mantener un control eficiente y evitar faltantes o exceso de stock.
 
-## Insercion de datos nuevos
+## Insercion de datos nuevos ➕
 
 1. Insertar un nuevo producto llamado "Chocolatina de borojó", categoría "Snack", con precio 4000, stock 35, y tags ["dulce", "energía"].
 
@@ -61,7 +61,7 @@ db.productos.insertOne(
 ```
 <br>
 
-## Lecturas
+## Lecturas 📖
 
 1. Consultar todos los productos que tengan stock mayor a 20 unidades.
 
@@ -84,7 +84,7 @@ db.clientes.find(
 ).toArray()
 ```
 
-## Actualizaciones
+## Actualizaciones 🔵
 
 1. Aumentar en 10 unidades el stock del producto "Borojó deshidratado".
 
@@ -105,7 +105,7 @@ db.productos.updateMany(
 )
 ```
 
-## Eliminaciones
+## Eliminaciones 🔴
 
 1. Eliminar el cliente que tenga el correo "juan@email.com".
 
@@ -124,11 +124,11 @@ printjson(
 )
 ```
 
-## Expresiones Regulares
+## Expresiones Regulares 🔧
 
 En esta sección se encuentran las consultas que utilizan expresiones regulares mediante el operador $regex.
 
-1. Buscar productos cuyo nombre empiece por "Boro".
+**1. Buscar productos cuyo nombre empiece por "Boro".**
 
 ```jsx
 db.productos.find(
@@ -138,7 +138,7 @@ db.productos.find(
 ```
 <br>
 
-2. Encontrar productos cuyo nombre contenga la palabra "con" (como en “Concentrado de borojó”).
+**2. Encontrar productos cuyo nombre contenga la palabra "con" (como en “Concentrado de borojó”).**
 ```jsx
 db.productos.find(
 	{nombre:{$regex:"con",$option:"i"}}
@@ -146,7 +146,7 @@ db.productos.find(
 ```
 <br>
 
-3. Encontrar clientes cuyo nombre tenga la letra "z" (insensible a mayúsculas/minúsculas).
+**3. Encontrar clientes cuyo nombre tenga la letra "z" (insensible a mayúsculas/minúsculas).**
 
 ```jsx
 db.clientes.find(
@@ -154,11 +154,11 @@ db.clientes.find(
 )
 ```
 
-## Operadores en consultas sobre arrays
+## Operadores en consultas sobre arrays 📲
 
 una serie de operadores especializados para trabajar con campos de tipo array, lo que permite realizar búsquedas avanzadas y precisas dentro de documentos que contienen listas de valores u objetos.
 
-1. Buscar clientes que tengan "natural" en sus preferencias.
+**1. Buscar clientes que tengan "natural" en sus preferencias.**
 
 ```jsx
 db.clientes.find(
@@ -167,7 +167,7 @@ db.clientes.find(
 ```
 <br>
 
-2. Encontrar productos que tengan al menos los tags "natural" y "orgánico" (usa $all).
+**2. Encontrar productos que tengan al menos los tags "natural" y "orgánico" (usa $all).**
 ```jsx
 db.productos.find(
     {tags:{$all: ["natural","orgánico"]}}
@@ -175,16 +175,16 @@ db.productos.find(
 ```
 <br>
 
-3. Listar productos que tienen más de un tag ($size).
+**3. Listar productos que tienen más de un tag ($size).**
 ```jsx
 db.productos.find(
     { $expr: { $gt: [ { $size: "$tags" }, 1 ] } }
 )
 ```
 
-## Funciones definidas en system.js
+## Funciones definidas en system.js 🛞
 
-1. Definir una función calcularDescuento(precio, porcentaje) que devuelva el precio con descuento aplicado.
+**1. Definir una función calcularDescuento(precio, porcentaje) que devuelva el precio con descuento aplicado.**
 
 ```jsx
 db.system.js.insertOne({
@@ -211,7 +211,7 @@ calcularDescuento(helado.precio,20)
 
 <br>
 
-2. Definir una función clienteActivo(idCliente) que devuelva true si el cliente tiene más de 3 compras registradas.
+**2. Definir una función clienteActivo(idCliente) que devuelva true si el cliente tiene más de 3 compras registradas.**
 
 ```jsx
 db.system.js.insertOne({
@@ -237,7 +237,7 @@ clienteActivo(10);
 
 <br>
 
-3. Definir una función verificarStock(productoId, cantidadDeseada) que retorne si hay suficiente stock.
+**3. Definir una función verificarStock(productoId, cantidadDeseada) que retorne si hay suficiente stock.**
 
 ```jsx
 db.system.js.insertOne({
@@ -261,3 +261,165 @@ verificarStock(aceite._id, 5)
 - Si existe, compara el campo stock con la cantidad deseada.
 
 - Retorna true si el stock es suficiente, o false en caso contrario.
+
+## Transacciones 🖲️
+
+Transacciones que realiza la tienda del borojo, transacciones muy comunes y que son cruciales para la gestion de sus ventas, inventario o productos.
+
+**1. Simular una venta:**
+
+a. Descontar del stock del producto
+
+b. Insertar la venta en la colección `ventas`(Todo dentro de una transacción.)
+
+```jsx
+const session = db.getMongo().startSession();
+const dbSession = session.getDatabase("tienda_borojo");
+session.startTransaction();
+
+try {
+    dbSession.productos.updateOne(
+        {_id: 8},
+        {$inc:{stock:-5}}
+    );
+
+    dbSession.ventas.insertOne(
+        {
+            _id: 11,
+            clienteId: 5,
+            productos: [{
+                productoId: 8,
+                cantidad: 5
+            }],
+            fecha: new Date(),
+            total: 45000
+        }
+    );
+
+    session.commitTransaction();
+    print("☑️ Transaccion finalizada con exito!")
+} catch (error) {
+    session.abortTransaction();
+    print("❌ Transaccion cancelada!")
+} finally {
+    session.endSession();
+}
+```
+
+**Explicación**
+
+- Se inicia una sesión y se obtiene la base de datos dentro de la transacción.
+
+- Se reduce el stock del producto con _id: 8 en 5 unidades.
+
+- Se inserta una nueva venta con la información del cliente, productos, fecha y total.
+
+- Si todo funciona bien → commitTransaction() guarda los cambios en la base de datos.
+
+- Si ocurre un error → abortTransaction() revierte ambas operaciones, manteniendo la integridad.
+
+- Finalmente, se cierra la sesión.
+
+<br>
+
+**2. Simular la entrada de nuevo inventario:**
+
+a. Insertar un documento en inventario
+
+b. Aumentar el stock del producto correspondiente (Todo dentro de una transacción.)
+
+```jsx
+const session = db.getMongo().startSession();
+const dbSession = session.getDatabase("tienda_borojo");
+session.startTransaction();
+
+try {
+    dbSession.inventario.insertOne(
+        {
+            _id: 11,
+            productoId: 9,
+            lote: "L011",
+            cantidad: 12,
+            fecha: new Date()
+        }
+    );
+
+    dbSession.productos.updateOne(
+        { _id: 9 },
+        { $inc: { stock: 12 } }
+    );
+
+    session.commitTransaction();
+    print("☑️ Transaccion finalizada con exito!")
+} catch (error) {
+    session.abortTransaction();
+    print("❌ Transaccion cancelada!")
+} finally {
+    session.endSession();
+}
+```
+
+**Explicación**
+
+- Se inicia una sesión y una transacción en la base de datos tienda_borojo.
+
+- Se inserta un nuevo lote en la colección inventario con su cantidad, lote y fecha de ingreso.
+
+- Se incrementa el stock del producto en la colección productos en la misma cantidad ingresada.
+
+- Si todo se ejecuta correctamente → commitTransaction() confirma los cambios en ambas colecciones.
+
+- Si ocurre un error → abortTransaction() cancela todas las operaciones, evitando inconsistencias.
+
+- Finalmente, se cierra la sesión.
+
+<br>
+
+
+**3. Hacer una operación de devolución:**
+
+a. Aumentar el stock
+
+b. Eliminar la venta correspondiente
+
+```jsx
+const session = db.getMongo().startSession();
+const dbSession = session.getDatabase("tienda_borojo");
+session.startTransaction();
+
+try {
+    dbSession.productos.updateOne(
+        { _id: 2 },
+        { $inc: { stock: 1 } },
+    );
+
+    dbSession.productos.updateOne(
+        { _id: 3 },
+        { $inc: { stock: 1 } }
+    )
+
+    dbSession.ventas.deleteOne(
+        { _id: 6 },
+    );
+
+    session.commitTransaction();
+    print("☑️ Transaccion finalizada con exito!")
+} catch (error) {
+    session.abortTransaction();
+    print("❌ Transaccion cancelada!")
+} finally {
+    session.endSession();
+}
+```
+
+- Se inicia una sesión y se abre una transacción sobre la base de datos tienda_borojo.
+
+- Se incrementa el stock de los productos con _id: 2 y _id: 3, devolviendo al inventario la cantidad que se había vendido.
+
+- Se elimina el registro de la venta con _id: 6 en la colección ventas.
+
+- Si todo se ejecuta correctamente → commitTransaction() confirma los cambios en ambas colecciones.
+
+- Si ocurre un error → abortTransaction() revierte todas las operaciones, asegurando que el stock y las ventas sigan sincronizados.
+
+- Finalmente, se cierra la sesión.
