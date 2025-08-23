@@ -2,11 +2,7 @@
 // precio con descuento aplicado.
 db.system.js.insertOne({
     _id: "calcularDescuento",
-    value: new Code(`
-    function(precio, porcentaje) { 
-      return precio - (precio * (porcentaje / 100)); 
-    }
-  `)
+    value: new Code("function(precio, porcentaje) {return precio - (precio * (porcentaje / 100)); }")
 });
 
 const f1 = db.system.js.findOne({ _id: "calcularDescuento" });
@@ -20,13 +16,7 @@ calcularDescuento(helado.precio,20)
 
 db.system.js.insertOne({
   _id: "clienteActivo",
-  value: new Code(`
-    function(idCliente) { 
-      var cliente = db.clientes.findOne({ _id: idCliente });
-      if (!cliente) return false;
-      return cliente.compras.length > 3;
-    }
-  `)
+  value: new Code("function(idCliente) {var cliente = db.clientes.findOne({ _id: idCliente });if (!cliente) return false;return cliente.compras.length > 3;}")
 });
 
 const f2 = db.system.js.findOne({ _id: "clienteActivo" });
@@ -39,13 +29,7 @@ clienteActivo(10);
 
 db.system.js.insertOne({
   _id: "verificarStock",
-  value: new Code(`
-    function(productoId, cantidadDeseada) { 
-      var producto = db.productos.findOne({ _id: productoId });
-      if (!producto) return false;
-      return producto.stock >= cantidadDeseada;
-    }
-  `)
+  value: new Code("function(productoId, cantidadDeseada) {var producto = db.productos.findOne({ _id: productoId });if (!producto) return false;return producto.stock >= cantidadDeseada;}")
 });
 
 const f3 = db.system.js.findOne({ _id: "verificarStock" });
