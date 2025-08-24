@@ -16,13 +16,14 @@ calcularDescuento(helado.precio,20)
 
 db.system.js.insertOne({
   _id: "clienteActivo",
-  value: new Code("function(idCliente) {var cliente = db.clientes.findOne({ _id: idCliente });if (!cliente) return false;return cliente.compras.length > 3;}")
+  value: new Code("function(idCliente) {const n = db.ventas.countDocuments({ clienteId: idCliente });return n > 3;}")
 });
 
 const f2 = db.system.js.findOne({ _id: "clienteActivo" });
 const clienteActivo = new Function('return ' + f2.value.code)();
 
-clienteActivo(10);
+const cliente1 = db.clientes.findOne({ _id: 1 });
+clienteActivo(cliente1._id);
 
 // 3. Definir una función verificarStock(productoId, cantidadDeseada) 
 // que retorne si hay suficiente stock.
@@ -36,4 +37,4 @@ const f3 = db.system.js.findOne({ _id: "verificarStock" });
 const verificarStock = new Function('return ' + f3.value.code)();
 
 const aceite = db.productos.findOne({ _id: 9 });
-verificarStock(aceite._id, 5)
+verificarStock(aceite._id, 12)

@@ -3,7 +3,7 @@
 // b. Eliminar la venta correspondiente
 
 const session = db.getMongo().startSession();
-const dbSession = session.getDatabase("tienda_borojo");
+const dbSession = session.getDatabase("tiendaborojo");
 session.startTransaction();
 
 

@@ -3,7 +3,7 @@
 // b. Insertar la venta en la colección `ventas`(Todo dentro de una transacción.)
 
 const session = db.getMongo().startSession();
-const dbSession = session.getDatabase("tienda_borojo");
+const dbSession = session.getDatabase("tiendaborojo");
 session.startTransaction();
 
 
