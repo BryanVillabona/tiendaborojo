@@ -72,6 +72,10 @@ db.productos.find(
     }
 ).toArray()
 ```
+**Resultado**
+
+![Reads_example_1](./Readme_images/Reads_example_1.png)
+
 <br>
 
 2. Encontrar los clientes que no han comprado aún ningún producto.
@@ -83,6 +87,12 @@ db.clientes.find(
     }
 ).toArray()
 ```
+**Resultado**
+
+![Reads_example_2](./Readme_images/Reads_example_2.png)
+
+Como no hay ningun cliente que no haya hecho compras, no hay ningun resultado.
+
 
 ## Actualizaciones 🔵
 
@@ -134,25 +144,40 @@ En esta sección se encuentran las consultas que utilizan expresiones regulares 
 db.productos.find(
     {nombre:{$regex:"^Boro"}}
 )
-
 ```
+
+**Resultado**
+
+![Regular_example_1](./Readme_images/Regular_example_1.png)
+
+
 <br>
 
 **2. Encontrar productos cuyo nombre contenga la palabra "con" (como en “Concentrado de borojó”).**
 ```jsx
 db.productos.find(
-	{nombre:{$regex:"con",$option:"i"}}
+	{nombre:{$regex:"con", $options:"i"}}
 )
 ```
+
+**Resultado**
+
+![Regular_example_2](./Readme_images/Regular_example_2.png)
+
 <br>
 
 **3. Encontrar clientes cuyo nombre tenga la letra "z" (insensible a mayúsculas/minúsculas).**
 
 ```jsx
 db.clientes.find(
-    {nombre:{$regex:"[Zz]"}}
+    {nombre:{$regex:"[Zz]"}},
+    {nombre: 1}
 )
 ```
+
+**Resultado**
+
+![Regular_example_3](./Readme_images/Regular_example_3.png)
 
 ## Operadores en consultas sobre arrays 📲
 
@@ -165,6 +190,11 @@ db.clientes.find(
     {preferencias:{$in: ["natural"]}}
 )
 ```
+
+**Resultado**
+
+![Arrays_queries_1](./Readme_images/Arrays_examples_1.png)
+
 <br>
 
 **2. Encontrar productos que tengan al menos los tags "natural" y "orgánico" (usa $all).**
@@ -175,12 +205,20 @@ db.productos.find(
 ```
 <br>
 
+**Resultado**
+
+![Arrays_queries_2](./Readme_images/Arrays_examples_2.png)
+
 **3. Listar productos que tienen más de un tag ($size).**
 ```jsx
 db.productos.find(
     { $expr: { $gt: [ { $size: "$tags" }, 1 ] } }
 )
 ```
+
+**Resultado**
+
+![Arrays_queries_3](./Readme_images/Arrays_examples_3.png)
 
 ## Aggregation Framework con Pipelines 🧮
 
@@ -518,7 +556,7 @@ try {
 
 - Finalmente, se cierra la sesión.
 
-## Indices Creados
+## Indices Creados 🫵
 
 **1. Creación del indice en el campo nombre de productos**
 
@@ -579,4 +617,53 @@ db.clientes.find({email: {$regex: "Carlos", $options: "i"}}).explain()
 ![Index_example_4](./Readme_images/Index_example_4.png)
 
 En el último campo señalado se observa que la búsqueda se ejecutó utilizando el índice en lugar de la colección completa, lo que confirma que el índice fue aplicado correctamente.
+
+## Como ejecutar los script 📰
+
+Para ejecutar cada uno de los scripts o un dataset, se puede optar por dos caminos
+
+**1. Desde la interfaz gráfica de mongo Compass**
+
+![execute_example_1](./Readme_images/execute_example_1.png)
+
+Se entra a mongo Compass y teniendo la base de datos ya creada y la colección donde se va a ejecutar el script se presiona en Insert document
+
+**2. Ingreso de los documentos**
+
+![execute_example_2](./Readme_images/execute_example_2.png)
+
+Aqui ya se pueden pegar los documentos
+
+Usando la otra opción hará lo mismo que lo anterior solo que accediendo al administrador de archivos
+
+<hr>
+
+La otra opción es por la consola (mongosh)
+
+**1. Se abre la terminal y se escribe el comando mongosh**
+
+![execute_example_3](./Readme_images/execute_example_3.png)
+
+Esto ya abre mongosh
+
+**2. Con el comando `load` se ejecutan los scripts**
+
+Primero ejecuta el comando: use tienda_borojo para usar la base de datos o crearla y luego con load se insertan los scripts
+
+**ejemplo**
+
+```bash
+load("/home/usuario/mis_scripts/consultas.js")
+
+```
+
+## Autores 🫅
+
+- Joan Sebastián Gómez Serrano
+
+- Brayan Andrés Villabona
+
+- Sergio Steven Lievano Amaya
+
+
 
