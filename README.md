@@ -517,3 +517,66 @@ try {
 - Si ocurre un error → abortTransaction() revierte todas las operaciones, asegurando que el stock y las ventas sigan sincronizados.
 
 - Finalmente, se cierra la sesión.
+
+## Indices Creados
+
+**1. Creación del indice en el campo nombre de productos**
+
+```jsx
+db.productos.createIndex({ nombre: 1 })
+```
+
+**Explicación**
+
+"Se crea un índice en el campo nombre mediante `createIndex`, con el fin de optimizar la eficiencia y velocidad de las consultas que lo utilizan."
+
+**Resultado**
+
+![Index_example](./Readme_images/Index_exa,ple_1.png)
+
+**2. Creación del indice compuesto en los campos categoria y precio de productos**
+
+```jsx
+db.productos.createIndex({ categoria: 1, precio: 1 });
+```
+
+**Explicación**
+
+![Index_example_2](./Readme_images/Index_example_2.png)
+
+Se genera un índice compuesto sobre los campos categoria y precio, con el propósito de optimizar el rendimiento de las consultas que se apoyan en dichos campos.
+
+**Resultado**
+
+![Index_example_2.2](./Readme_images/Index_example_2.2.png)
+
+**3. Creación del indice en el campo email de usuarios**
+
+```jsx
+db.clientes.createIndex({ email: 1 });
+```
+
+**Explicación**
+
+![Index_example_2.2](./Readme_images/Index_example_3.png)
+
+Se crea un índice en el campo email para garantizar la diferenciación entre correos electrónicos y optimizar la eficiencia en las búsquedas.
+
+**Resultado**
+
+![Index_example_3.2](./Readme_images/Index_example_3.2.png)
+
+**4. Uso de explain para analizar el uso del índice en una consulta**
+
+```jsx
+db.clientes.find({email: {$regex: "Carlos", $options: "i"}}).explain()
+```
+
+**Explicación**
+
+"Esta consulta es similar a la anterior, pero ahora se incorpora la cláusula `.explain()`, la cual proporciona información sobre la ejecución de la consulta, permitiendo determinar si la búsqueda se realizó mediante el uso de un índice o directamente sobre la colección."
+
+![Index_example_4](./Readme_images/Index_example_4.png)
+
+En el último campo señalado se observa que la búsqueda se ejecutó utilizando el índice en lugar de la colección completa, lo que confirma que el índice fue aplicado correctamente.
+
