@@ -341,6 +341,10 @@ calcularDescuento(helado.precio,20)
 
 - Se ejecuta sobre los datos de la colección, en este caso calculando el nuevo precio con descuento.
 
+**Resultado**
+
+![function_1](./Readme_images/function_1.jpeg)
+
 <br>
 
 **2. Definir una función clienteActivo(idCliente) que devuelva true si el cliente tiene más de 3 compras registradas.**
@@ -366,6 +370,10 @@ clienteActivo(10);
 - Si existe, verifica el tamaño del array compras.
 
 - Retorna true únicamente cuando el cliente tiene más de 3 compras.
+
+**Resultado**
+
+![function_2](./Readme_images/function_2.jpeg)
 
 <br>
 
@@ -393,6 +401,10 @@ verificarStock(aceite._id, 5)
 - Si existe, compara el campo stock con la cantidad deseada.
 
 - Retorna true si el stock es suficiente, o false en caso contrario.
+
+**Resultado**
+
+![function_3](./Readme_images/function_3.jpeg)
 
 ## Transacciones 🖲️
 
@@ -452,6 +464,14 @@ try {
 
 - Finalmente, se cierra la sesión.
 
+**Resultado**
+
+![transaction_1](./Readme_images/transaction_1.jpeg)
+
+![transaction_1.2](./Readme_images/transaction_1.2.jpeg)
+
+![transaction_1.3](./Readme_images/transaction_1.3.jpeg)
+
 <br>
 
 **2. Simular la entrada de nuevo inventario:**
@@ -505,6 +525,12 @@ try {
 
 - Finalmente, se cierra la sesión.
 
+![transaction_2](./Readme_images/transaction_2.jpeg)
+
+![transaction_2.2](./Readme_images/transaction_2.2.jpeg)
+
+![transaction_2.3](./Readme_images/transaction_2.3.jpeg)
+
 <br>
 
 
@@ -555,6 +581,14 @@ try {
 - Si ocurre un error → abortTransaction() revierte todas las operaciones, asegurando que el stock y las ventas sigan sincronizados.
 
 - Finalmente, se cierra la sesión.
+
+![transaction_3](./Readme_images/transaction_3.jpeg)
+
+![transaction_3.2](./Readme_images/transaction_3.2.jpeg)
+
+![transaction_3.3](./Readme_images/transaction_3.3.jpeg)
+
+![transaction_3.4](./Readme_images/transaction_3.4.jpeg)
 
 ## Indices Creados 🫵
 
