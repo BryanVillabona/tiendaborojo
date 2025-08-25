@@ -351,14 +351,16 @@ calcularDescuento(helado.precio,20)
 
 ```jsx
 db.system.js.insertOne({
+db.system.js.insertOne({
   _id: "clienteActivo",
-  value: new Code("function(idCliente) {var cliente = db.clientes.findOne({ _id: idCliente });if (!cliente) return false;return cliente.compras.length > 3;}")
+  value: new Code("function(idCliente) {const n = db.ventas.countDocuments({ clienteId: idCliente });return n > 3;}")
 });
 
 const f2 = db.system.js.findOne({ _id: "clienteActivo" });
 const clienteActivo = new Function('return ' + f2.value.code)();
 
-clienteActivo(10);
+const cliente1 = db.clientes.findOne({ _id: 1 });
+clienteActivo(cliente1._id);
 ```
 
 **Explicación**
