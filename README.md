@@ -352,13 +352,14 @@ calcularDescuento(helado.precio,20)
 ```jsx
 db.system.js.insertOne({
   _id: "clienteActivo",
-  value: new Code("function(idCliente) {var cliente = db.clientes.findOne({ _id: idCliente });if (!cliente) return false;return cliente.compras.length > 3;}")
+  value: new Code("function(idCliente) {const n = db.ventas.countDocuments({ clienteId: idCliente });return n > 3;}")
 });
 
 const f2 = db.system.js.findOne({ _id: "clienteActivo" });
 const clienteActivo = new Function('return ' + f2.value.code)();
 
-clienteActivo(10);
+const cliente1 = db.clientes.findOne({ _id: 1 });
+clienteActivo(cliente1._id);
 ```
 
 **Explicación**
@@ -373,7 +374,7 @@ clienteActivo(10);
 
 **Resultado**
 
-![function_2](./Readme_images/function_2.jpeg)
+![function_2](./Readme_images/function_3.jpeg)
 
 <br>
 
@@ -389,7 +390,7 @@ const f3 = db.system.js.findOne({ _id: "verificarStock" });
 const verificarStock = new Function('return ' + f3.value.code)();
 
 const aceite = db.productos.findOne({ _id: 9 });
-verificarStock(aceite._id, 5)
+verificarStock(aceite._id, 12)
 ```
 
 **Explicación**
@@ -404,7 +405,7 @@ verificarStock(aceite._id, 5)
 
 **Resultado**
 
-![function_3](./Readme_images/function_3.jpeg)
+![function_3](./Readme_images/function_2.jpeg)
 
 ## Transacciones 🖲️
 
@@ -418,7 +419,7 @@ b. Insertar la venta en la colección `ventas`(Todo dentro de una transacción.
 
 ```jsx
 const session = db.getMongo().startSession();
-const dbSession = session.getDatabase("tienda_borojo");
+const dbSession = session.getDatabase("tiendaborojo");
 session.startTransaction();
 
 try {
@@ -482,7 +483,7 @@ b. Aumentar el stock del producto correspondiente (Todo dentro de una transacci�
 
 ```jsx
 const session = db.getMongo().startSession();
-const dbSession = session.getDatabase("tienda_borojo");
+const dbSession = session.getDatabase("tiendaborojo");
 session.startTransaction();
 
 try {
@@ -542,7 +543,7 @@ b. Eliminar la venta correspondiente
 
 ```jsx
 const session = db.getMongo().startSession();
-const dbSession = session.getDatabase("tienda_borojo");
+const dbSession = session.getDatabase("tiendaborojo");
 session.startTransaction();
 
 try {
